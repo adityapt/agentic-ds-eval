@@ -119,15 +119,15 @@ Version pinning recorded in the experimental log. Each agent run with its native
 
 ### 4.4 Base Model Matrix (3 models)
 
-Selected to span closed/open and provider, while keeping cost manageable for an independent-researcher budget:
+Selected to span closed/open paradigms while emphasizing *code-strong* model variants — appropriate for an evaluation centered on code-generating DS agents:
 
-| Model | Tier | Family |
-|---|---|---|
-| **Claude 4.6 Sonnet** | Mid-frontier closed | Anthropic |
-| **GPT-5** *or* **Gemini 2.5 Flash** | Mid-/frontier closed | OpenAI or Google (selected by access/cost at experiment time) |
-| **Llama 4** *or* **DeepSeek-V3** | Frontier-tier open-source | Self-hosted on rented GPU |
+| Model | Tier | Family | Type |
+|---|---|---|---|
+| **Claude 4.6 Sonnet** | Mid-frontier closed | Anthropic | General frontier with strong code training |
+| **DeepSeek-V3** | Frontier open (671B MoE) | DeepSeek | General frontier with leading open-weights code performance |
+| **Qwen2.5-Coder-32B-Instruct** | Code-specialized open | Alibaba | Explicitly code-tuned, smaller form factor |
 
-Open-source choice deferred to experiment time pending performance/availability comparison; one of Llama 4 / DeepSeek-V3 / Qwen 2.5-Max selected. Decision documented in experimental log.
+**Justification for not including GPT-5 or Gemini 2.5 Pro:** The matrix prioritizes the *open-vs-closed* axis and *general-vs-code-specialized* axis over OpenAI/Google representation. Two open code-strong models (DeepSeek-V3, Qwen2.5-Coder) plus one closed general (Sonnet) gives reproducibility via open weights and minimizes per-token cost without sacrificing the bias-defense argument. Reviewer concern about OpenAI omission to be addressed in §11 Risks and §12 Limitations.
 
 **Stretch headline cells (optional):** A single round of **Claude 4.7 Opus** on the MMM task (Task 1) reported separately as a frontier-tier sanity-check anchor. Estimated incremental cost ~$30–50.
 
@@ -155,7 +155,15 @@ For each task, results are reported as:
 Before any experiments are run:
 1. Lifecycle × autonomy framework (§4.1) registered on OSF with timestamp.
 2. Task suite, agent matrix, base-model matrix, seed list, evaluation protocols registered.
-3. Hypothesis statements registered: H1 (model-effect dominates agent-effect on quantitative metrics), H2 (agents reach L4 autonomy on routine tasks but fall back to L3 or below on attribution-heavy tasks), H3 (cross-baseline agreement on MMM is bounded above by inter-baseline agreement among the three reference tools).
+3. Two pre-registered hypotheses:
+
+   **H1 — Model-effect dominates agent-effect.**
+   Variance in task metrics due to base-model choice will exceed variance due to agent-scaffolding choice, measured via two-way ANOVA on the 3×3 matrix per task.
+   *Rejection criterion:* If F-statistic for agent-effect ≥ F-statistic for model-effect on ≥ 4 of 6 tasks, H1 is rejected.
+
+   **H2 — Autonomy ceiling varies by task type.**
+   Agents achieve L4 autonomy (cross-stage autonomous, single human checkpoint) on routine prediction tasks (Coupon, Churn, Recommendation) in ≥ 60% of cells; achieve only L3 or below on attribution-heavy tasks (MMM, Forecasting) in ≥ 70% of cells.
+   *Rejection criterion:* If observed L4-rate falls below 60% on routine tasks OR exceeds 30% on attribution-heavy tasks, H2 is rejected.
 
 OSF DOI included in paper.
 
@@ -187,17 +195,19 @@ OSF DOI included in paper.
 
 ## 8. Cost Estimate
 
-**Realistic out-of-pocket range (no research credits expected): $400–$1,200.**
+**Realistic out-of-pocket range (no research credits expected): $300–$600.**
 
-Breakdown:
-- 270 runs × ~$1–4 per run on mid-tier closed model (Sonnet / Flash) = $270–$1,080.
-- Open-source GPU rental (≤ 100 hours at $1/hr) = $50–$100.
-- Stretch headline cells (Claude 4.7 Opus on MMM only) = $30–50.
+Breakdown (Option β matrix: Sonnet + DeepSeek-V3 + Qwen2.5-Coder):
+- 90 runs × Claude 4.6 Sonnet × ~$3 each = ~$270.
+- 90 runs × DeepSeek-V3 (open, GPU-rented) = ~$50–80 GPU rental.
+- 90 runs × Qwen2.5-Coder-32B (open, GPU-rented, shared infra with DeepSeek) = ~$30–50 incremental.
+- Stretch headline cells (Claude 4.7 Opus on MMM only, optional) = $30–50.
 - Storage and incidental = $50.
 
 Cost-control levers in place:
-- Mid-tier closed models for the full matrix; frontier (Opus) reserved for stretch headline cells only.
-- Aggressive prompt caching on Anthropic and OpenAI APIs (~80% discount on cached prefix).
+- Two open-source models on shared rented GPU (~$1–2/hr; H100 or A100).
+- Mid-tier closed model (Sonnet) only — frontier (Opus) reserved for stretch headline cells.
+- Aggressive prompt caching on Anthropic API (~80% discount on cached prefix).
 - Resumable across interruptions; failed runs do not cost twice.
 - Rate-limited execution.
 
@@ -239,6 +249,7 @@ In order of estimated acceptance probability (from author's prior journal-fit re
 | **Field velocity — frontier model release within 6 months may obsolete the matrix.** | Submit within 4 months of experiment completion. Frame the matrix as a snapshot at a stated date; future model versions are documented as future work. |
 | **External validity from 6 tasks.** | Task selection spans 3 distinct DS skill axes (causal/attribution, ranking, time-series). Results explicitly conditioned on task type, not generalized to "all DS." Limitations section names specific generalization caveats. |
 | **Cost overrun.** | Resumable harness; cost-tracking script; ability to drop the stretch headline cells first, then trim seeds from 5 to 3 (saves ~40%) before reducing the matrix dimensions. |
+| **No OpenAI/GPT-5 in the matrix.** | Documented in §4.4 with rationale (open-vs-closed prioritized over provider count). Reviewers may ask; response: matrix prioritizes reproducibility (two open-weights models) and budget feasibility for an independent researcher; the GPT-5 question can be addressed in follow-up work or as a stretch addition if budget allows. |
 
 ---
 
@@ -267,8 +278,13 @@ To be reported as a dedicated section in the paper:
 
 ## 14. Open Questions for Author Review
 
-1. Does the pre-registration plan (§5) include the right hypotheses, or should H1–H3 be revised?
-2. Should the OSF pre-registration go up *before* or *after* this design doc is committed to GitHub? (Pre-registration before commit is conservative; after commit makes the design doc public earlier.)
-3. Repository license — MIT (matching `llmsynth`) or Apache-2.0?
-4. Should the design doc include a **stretch task** (e.g., A/B-test analysis on a public experiment dataset) for if the matrix runs comfortably under budget? Currently §4.2 is locked at 6 tasks.
-5. For the 2nd base model slot in §4.4, lock now to **GPT-5** (broader cited family) or **Gemini 2.5 Flash** (cheaper)? Or defer until experiment time?
+1. Should the OSF pre-registration go up *before* or *after* this design doc is committed to GitHub? Pre-registration before commit is conservative; after commit makes the design doc public earlier.
+
+**Resolved (locked decisions):**
+
+- Hypotheses: H1 + H2 only (H3 dropped as too weak).
+- License: MIT.
+- Tasks: 6 (no A/B-test stretch task).
+- Base models: Claude 4.6 Sonnet + DeepSeek-V3 + Qwen2.5-Coder-32B-Instruct (Option β).
+- Agents: AIDE + AutoGen + Aider.
+- Matrix size: 3 × 3 × 6 × 5 seeds = 270 runs (+ optional ~10 stretch headline cells).
