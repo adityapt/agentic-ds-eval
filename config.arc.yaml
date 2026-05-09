@@ -3,54 +3,7 @@ project:
   mode: "full-auto"
 
 research:
-  topic: |
-    Multi-Agent Multi-Base-Model Empirical Evaluation of Agentic AI in
-    Product and Marketing Data Science.
-
-    AUTHORITATIVE DESIGN SPEC (do not regenerate hypotheses or experiment
-    design — use these locked decisions verbatim):
-
-    - Tasks (6 locked): (1) Marketing Mix Modeling on Robyn demo data with
-      three reference baselines: Robyn, PyMC-Marketing, LightweightMMM;
-      (2) Coupon redemption prediction (Recruit Holdings Kaggle 2015);
-      (3) Customer churn (KKBox Music Streaming Churn, Kaggle 2017);
-      (4) Recommendation (H&M Personalized Fashion, Kaggle 2022);
-      (5) Conversion-funnel (RetailRocket events);
-      (6) Hierarchical retail forecasting (M5 Walmart, Makridakis 2020).
-
-    - Agents (3 locked): AIDE (Weco AI / MLE-bench), AutoGen (Microsoft),
-      Aider.
-
-    - Base models (3 locked): Claude 4.6 Sonnet (Anthropic),
-      DeepSeek-V3 (open), Qwen2.5-Coder-32B-Instruct (open).
-
-    - Statistical protocol: 5 seeds (42, 123, 7, 2024, 999). 95% CI via
-      t-distribution. Two-way ANOVA per task on the 3x3 matrix.
-
-    - Pre-registered hypotheses (already locked, do NOT generate alternatives):
-      H1: Variance due to base-model choice exceeds variance due to
-          agent-scaffolding choice. Rejection: F-stat for agent >= F-stat
-          for model on >= 4 of 6 tasks.
-      H2: Agents achieve L4 autonomy in >= 60% of cells on routine tasks
-          (Coupon, Churn, Recommendation), and L3 or below in >= 70% of
-          cells on attribution-heavy tasks (MMM, Forecasting).
-
-    - Lifecycle x autonomy framework: 7 lifecycle stages (problem framing,
-      data exploration, feature engineering, model selection, validation,
-      interpretation, reporting) crossed with 5 autonomy levels
-      (L1 code-completion through L5 fully-autonomous, SAE-inspired).
-
-    - Excluded by design: proprietary integrated-stack agents (Claude Code,
-      Devin, Cursor Agent, Copilot Workspace, ChatGPT Advanced Data Analysis,
-      Gemini Data Science Agent) due to base-model-lock breaking the
-      bias-defense argument.
-
-    Goal of this ResearchClaw run: produce a paper SKELETON only. Write
-    Introduction, Related Work, Methodology (consistent with the locked
-    spec above), Limitations sections. Leave Results and Discussion as
-    placeholders (the author will fill them with real experimental data
-    later). Do NOT execute experiments.
-
+  topic: "Multi-agent multi-base-model benchmarking of LLM-based AI agents on data-science tasks"
   domains:
     - "machine-learning"
     - "agentic-ai"
